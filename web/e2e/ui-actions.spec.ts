@@ -157,11 +157,14 @@ for (const theme of ["dark", "light"])
       selector: ".host-card h3",
     });
     const fonts = await cdp.send("CSS.getPlatformFontsForNode", { nodeId });
+    const used = await page.evaluate(() => {
+      const el = document.querySelector(".host-card h3")!;
+      return getComputedStyle(el).fontFamily;
+    });
     expect(
-      fonts.fonts.some(
-        (f) => /^Geist[- ]SemiBold$/.test(f.postScriptName) && f.isCustomFont,
-      ),
-    ).toBe(true);
+      fonts.fonts.filter((f) => f.isCustomFont).map((f) => f.postScriptName),
+      `CSS font-family: ${used} / 全部平台字体: ${JSON.stringify(fonts.fonts)}`,
+    ).toContain("Geist-SemiBold");
     const measurements: any[] = [];
     async function measure(selector: string) {
       const el = page.locator(selector).first();
