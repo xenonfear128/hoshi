@@ -1,0 +1,13 @@
+services:
+  app:
+    environment:
+      STRIPE_SECRET_KEY_FILE: /run/secrets/stripe_key
+      STRIPE_WEBHOOK_SECRET_FILE: /run/secrets/stripe_webhook
+      STRIPE_PRICE_ID: ${STRIPE_PRICE_ID:?Set STRIPE_PRICE_ID}
+      SUBSCRIPTION_CREDITS: ${SUBSCRIPTION_CREDITS:-1000000}
+    secrets: [stripe_key, stripe_webhook]
+secrets:
+  stripe_key:
+    file: ./secrets/stripe_key
+  stripe_webhook:
+    file: ./secrets/stripe_webhook

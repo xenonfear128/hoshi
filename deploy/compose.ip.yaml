@@ -1,0 +1,60 @@
+services:
+  app:
+    build: ..
+    restart: unless-stopped
+    environment:
+      # 模板默认值：实际部署须在 .env 中设置 PUBLIC_ORIGIN 为真实入口域名
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-https://ssh.example.com}
+      DATABASE_URL: postgres://remoter:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/remoter?sslmode=disable
+      MASTER_KEY_FILE: /run/secrets/master_key
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+      TASK_RETENTION_DAYS: ${TASK_RETENTION_DAYS:-30}
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-172.16.0.0/12}
+      SSH_ALLOWED_CIDRS: ${SSH_ALLOWED_CIDRS:-}
+      AI_ALLOWED_CIDRS: ${AI_ALLOWED_CIDRS:-}
+      SUBSCRIPTION_API_URL: ${SUBSCRIPTION_API_URL:-}
+      SUBSCRIPTION_API_KEY_FILE: /run/secrets/subscription_key
+      SUBSCRIPTION_MODEL: ${SUBSCRIPTION_MODEL:-}
+      BILLING_ADMIN_TOKEN_FILE: /run/secrets/billing_token
+    secrets: [master_key, subscription_key, billing_token]
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 768m
+    pids_limit: 128
+  db:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: remoter
+      POSTGRES_USER: remoter
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U remoter -d remoter"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["8443:443"]
+    volumes:
+      - ./Caddyfile.ip:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [app]
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
+secrets:
+  master_key:
+    file: ../secrets/master_key
+  subscription_key:
+    file: ../secrets/subscription_key
+  billing_token:
+    file: ../secrets/billing_token

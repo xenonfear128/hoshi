@@ -1,0 +1,14 @@
+# 模板：将 203.0.113.10 与 ssh.example.com 替换为实际源站 IP 与入口域名。
+# 203.0.113.0/24 为 RFC 5737 文档专用地址，不可路由。
+{
+    default_sni 203.0.113.10
+}
+
+https://203.0.113.10, https://ssh.example.com {
+    tls internal
+    encode zstd gzip
+    reverse_proxy app:8080 {
+        flush_interval -1
+        stream_close_delay 5m
+    }
+}

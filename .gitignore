@@ -1,0 +1,29 @@
+.env
+node_modules/
+web/dist/
+coverage/
+*.log
+bin/
+playwright-report/
+test-results/
+secrets/
+web/*.tsbuildinfo
+.build-cache/
+.work/
+bak/
+
+# Local platform state and migration archives
+.agents/
+.codex/
+exports/
+.env.*
+!.env.example
+*.dump
+*.pem
+*.key
+
+# Historical visual test output (design source remains tracked)
+design/**/*.png
+design/*.png
+design/**/*.jpg
+design/**/contrast-*.json
