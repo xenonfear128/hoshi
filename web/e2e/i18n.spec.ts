@@ -81,7 +81,7 @@ for (const width of [390, 1280])
       const text = copy[locale];
       await expect(page.locator("html")).toHaveAttribute("lang", locale);
       await expect(page.locator(".hoshi-wordmark")).toHaveText(text.brand);
-      await expect(page).toHaveTitle(new RegExp("^" + text.brand + " ·"));
+      await expect(page).toHaveTitle(new RegExp("^" + text.brand + " SSH$"));
       await expect(
         page.getByRole("heading", { name: text.heading, exact: true }),
       ).toBeVisible();

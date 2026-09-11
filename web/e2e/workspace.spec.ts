@@ -72,7 +72,9 @@ test("real login, SSH, SFTP, theme and ownership boundaries", async ({
       (el) => el === document.querySelector(".xterm-helper-textarea"),
     ),
   ).toBe(true);
-  await expect(page.getByText("每秒采样", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "采样间隔", exact: true }).first(),
+  ).toBeVisible();
   await page.getByRole("textbox", { name: "远端路径" }).fill(remoteDir);
   await page.getByRole("textbox", { name: "远端路径" }).press("Enter");
   const name = `remoter-e2e-${Date.now()}.txt`;

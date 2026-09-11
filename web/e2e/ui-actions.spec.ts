@@ -159,7 +159,7 @@ for (const theme of ["dark", "light"])
     const fonts = await cdp.send("CSS.getPlatformFontsForNode", { nodeId });
     expect(
       fonts.fonts.some(
-        (f) => f.postScriptName === "Inter-SemiBold" && f.isCustomFont,
+        (f) => /^Geist.*SemiBold$/.test(f.postScriptName) && f.isCustomFont,
       ),
     ).toBe(true);
     const measurements: any[] = [];
@@ -300,7 +300,9 @@ for (const width of [390, 768])
     await expect(toggle).toBeFocused();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await toggle.click();
-    await page.locator(".page-heading h1").click({ position: { x: 4, y: 4 } });
+    await page
+      .locator(".home.page-view.is-active .page-heading h1")
+      .click({ position: { x: 4, y: 4 } });
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 

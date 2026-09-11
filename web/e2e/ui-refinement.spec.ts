@@ -145,7 +145,7 @@ for (const width of [390, 768, 1280, 1512])
         await shot("assistant");
         expect(
           await page
-            .locator(".command-assistant select")
+            .locator(".command-assistant .select-trigger")
             .evaluate((e) => e.clientWidth),
         ).toBeGreaterThan(250);
         expect(errors).toEqual([]);

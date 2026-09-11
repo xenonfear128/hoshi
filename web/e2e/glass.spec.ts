@@ -6,7 +6,7 @@ for (const width of [360, 390, 768, 1512]) {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     const inputs = await fixture(page);
-    await expect(page).toHaveTitle("星 · SSH · SFTP · 实时监控 · AI 运维");
+    await expect(page).toHaveTitle("星 SSH");
     await expect(page.locator(".hoshi-wordmark")).toHaveText("星");
     await expect(page.locator("html")).toHaveAttribute("data-glass", "webgl");
     await expect(page.locator(".nav.glass-ready")).toHaveCount(1);
@@ -56,8 +56,13 @@ for (const width of [360, 390, 768, 1512]) {
       await page.getByRole("button", { name: "Ctrl+C", exact: true }).click();
       expect(inputs).toContain("\x03");
       await page.getByRole("button", { name: "监控", exact: true }).click();
-      await expect(page.getByLabel("网卡", { exact: true })).toBeVisible();
+      await expect(
+        page
+          .locator(".workspace-page .monitor")
+          .getByRole("combobox", { name: "网卡", exact: true }),
+      ).toBeVisible();
       await page
+        .locator(".workspace-page .monitor")
         .getByRole("combobox", { name: "磁盘挂载点", exact: true })
         .click();
       await page.getByRole("option").nth(1).click();
@@ -187,5 +192,9 @@ test("phone rotation and reduced-motion preserve session and keyboard controls",
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(540);
   await noOverflow(page);
   await page.getByRole("button", { name: "监控", exact: true }).click();
-  await expect(page.getByLabel("网卡", { exact: true })).toBeVisible();
+  await expect(
+    page
+      .locator(".workspace-page .monitor")
+      .getByRole("combobox", { name: "网卡", exact: true }),
+  ).toBeVisible();
 });

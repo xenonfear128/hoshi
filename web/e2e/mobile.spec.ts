@@ -54,8 +54,16 @@ test("phone SSH, monitor, SFTP editing and streaming download", async ({
     .poll(() => page.locator(".xterm-screen").innerText())
     .toContain("PHONE_SSH_OK");
   await page.getByRole("button", { name: "监控", exact: true }).tap();
-  await expect(page.getByLabel("网卡", { exact: true })).toHaveValue(/.+/);
-  await expect(page.getByText("每秒采样", { exact: true })).toBeVisible();
+  await expect(
+    page
+      .locator(".monitor-page-view")
+      .getByRole("combobox", { name: "网卡", exact: true }),
+  ).toHaveText(/\S+/);
+  await expect(
+    page
+      .locator(".monitor-page-view")
+      .getByRole("combobox", { name: "网卡", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "文件", exact: true }).tap();
   await page.getByRole("textbox", { name: "远端路径" }).fill("/tmp");
   await page.getByRole("textbox", { name: "远端路径" }).press("Enter");
