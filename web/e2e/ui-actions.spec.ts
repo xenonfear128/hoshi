@@ -159,7 +159,7 @@ for (const theme of ["dark", "light"])
     const fonts = await cdp.send("CSS.getPlatformFontsForNode", { nodeId });
     expect(
       fonts.fonts.some(
-        (f) => /^Geist.*SemiBold$/.test(f.postScriptName) && f.isCustomFont,
+        (f) => /^Geist[- ]SemiBold$/.test(f.postScriptName) && f.isCustomFont,
       ),
     ).toBe(true);
     const measurements: any[] = [];

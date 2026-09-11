@@ -73,7 +73,9 @@ test("real login, SSH, SFTP, theme and ownership boundaries", async ({
     ),
   ).toBe(true);
   await expect(
-    page.getByRole("combobox", { name: "采样间隔", exact: true }).first(),
+    page
+      .locator(".workspace-page .monitor")
+      .getByRole("combobox", { name: "网卡", exact: true }),
   ).toBeVisible();
   await page.getByRole("textbox", { name: "远端路径" }).fill(remoteDir);
   await page.getByRole("textbox", { name: "远端路径" }).press("Enter");
@@ -273,7 +275,7 @@ test("switching accounts clears the previous host list before a slow refresh", a
   await expect(
     page.getByRole("heading", { name: "PREVIOUS_ACCOUNT_PRIVATE_HOST" }),
   ).toBeVisible();
-  await page.getByTitle(email, { exact: true }).click();
+  await page.getByRole("button", { name: "退出登录", exact: true }).click();
   await expect(page.getByRole("heading", { name: "欢迎回来" })).toBeVisible();
   await page.getByRole("button", { name: "还没有账号？注册" }).click();
   await page
