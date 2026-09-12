@@ -157,8 +157,13 @@ export default function LiquidGlass() {
       });
       schedule();
     };
+    // 事件 target 不一定是 Element：pointerleave 离开文档时 target 为
+    // document，且监听挂在 document 的捕获阶段。缺少运行时检查会对
+    // document 调用 closest 并抛 TypeError。
+    const asElement = (target: EventTarget | null): Element | null =>
+      target instanceof Element ? target : null;
     const press = (event: PointerEvent) => {
-      const button = (event.target as Element | null)?.closest<HTMLElement>(
+      const button = asElement(event.target)?.closest<HTMLElement>(
         "button:not(:disabled)",
       );
       if (button) {
@@ -169,7 +174,7 @@ export default function LiquidGlass() {
     const release = (event: PointerEvent) => {
       const button =
         pressedButton ||
-        (event.target as Element | null)?.closest<HTMLElement>("button");
+        asElement(event.target)?.closest<HTMLElement>("button");
       if (!button) return;
       pressedButton = null;
       delete button.dataset.pressed;

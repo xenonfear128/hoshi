@@ -130,8 +130,11 @@ export default function App() {
   useEffect(() => {
     if (!menuOpen) return;
     const outside = (e: PointerEvent) => {
-      if (!(e.target as Element).closest(".global-actions,.global-menu-toggle"))
-        setMenuOpen(false);
+      // pointerleave 等事件的 target 可能是 document，不具备 closest。
+      const inside =
+        e.target instanceof Element &&
+        e.target.closest(".global-actions,.global-menu-toggle");
+      if (!inside) setMenuOpen(false);
     };
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
