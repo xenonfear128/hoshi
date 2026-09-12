@@ -161,10 +161,13 @@ for (const theme of ["dark", "light"])
       const el = document.querySelector(".host-card h3")!;
       return getComputedStyle(el).fontFamily;
     });
+    // 可变字体在 Windows 与 Linux 实例化出的 postScriptName 不同
+    // （Geist-SemiBold / Geist-Regular），这里只断言用的是本地托管的
+    // Geist，而不是平台回退字体。
     expect(
-      fonts.fonts.filter((f) => f.isCustomFont).map((f) => f.postScriptName),
+      fonts.fonts.filter((f) => f.isCustomFont).map((f) => f.familyName),
       `CSS font-family: ${used} / 全部平台字体: ${JSON.stringify(fonts.fonts)}`,
-    ).toContain("Geist-SemiBold");
+    ).toContain("Geist");
     const measurements: any[] = [];
     async function measure(selector: string) {
       const el = page.locator(selector).first();
