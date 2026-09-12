@@ -54,16 +54,22 @@ test("phone SSH, monitor, SFTP editing and streaming download", async ({
     .poll(() => page.locator(".xterm-screen").innerText())
     .toContain("PHONE_SSH_OK");
   await page.getByRole("button", { name: "监控", exact: true }).tap();
+  // 网卡选择器的选项来自实时监控数据，首帧到达前不会渲染。
+  await expect
+    .poll(
+      () =>
+        page
+          .locator(".workspace-page .monitor")
+          .getByRole("combobox", { name: "网卡", exact: true })
+          .count(),
+      { timeout: 20000 },
+    )
+    .toBeGreaterThan(0);
   await expect(
     page
-      .locator(".monitor-page-view")
+      .locator(".workspace-page .monitor")
       .getByRole("combobox", { name: "网卡", exact: true }),
   ).toHaveText(/\S+/);
-  await expect(
-    page
-      .locator(".monitor-page-view")
-      .getByRole("combobox", { name: "网卡", exact: true }),
-  ).toBeVisible();
   await page.getByRole("button", { name: "文件", exact: true }).tap();
   await page.getByRole("textbox", { name: "远端路径" }).fill("/tmp");
   await page.getByRole("textbox", { name: "远端路径" }).press("Enter");
